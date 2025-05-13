@@ -1,0 +1,20 @@
+git add .
+git commit -m  "run time and b-end ping scripts"
+git push origin develop
+
+git flow release start release43
+EDITOR=true git flow release finish -m release43
+git checkout main
+git add .
+git commit -m  "fix error in ...path.js"
+git push origin main
+git checkout develop
+
+
+git flow release start release31
+EDITOR=true git flow release finish -m "Release message" release31
+git checkout main
+git add .
+git commit -m  "test"
+git push origin main
+git checkout develop

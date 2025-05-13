@@ -1,0 +1,214 @@
+/* Terrain CSS classes for Battlefield component */
+
+/* Mountain Terrain */
+.mountain-terrain {
+    background: linear-gradient(to bottom, #87CEEB 0%, #E0F7FF 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .mountain-terrain::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60%;
+    background: linear-gradient(135deg, #8B4513 25%, #A0522D 25%, #A0522D 50%, #8B4513 50%, #8B4513 75%, #A0522D 75%);
+    background-size: 40px 40px;
+    clip-path: polygon(0% 100%, 0% 40%, 15% 30%, 30% 35%, 45% 20%, 60% 35%, 75% 25%, 90% 30%, 100% 40%, 100% 100%);
+    z-index: 0;
+  }
+  
+  /* Ocean Terrain */
+  .ocean-terrain {
+    background: linear-gradient(to bottom, #1E90FF 0%, #000080 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .ocean-terrain::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 20%;
+    background: #00008B;
+    clip-path: polygon(0% 40%, 5% 45%, 10% 40%, 15% 45%, 20% 40%, 25% 45%, 30% 40%, 35% 45%, 40% 40%, 45% 45%, 50% 40%, 55% 45%, 60% 40%, 65% 45%, 70% 40%, 75% 45%, 80% 40%, 85% 45%, 90% 40%, 95% 45%, 100% 40%, 100% 100%, 0% 100%);
+    z-index: 0;
+    animation: waveAnimation 5s linear infinite;
+  }
+  
+  @keyframes waveAnimation {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100px); }
+  }
+  
+  /* Forest Terrain */
+  .forest-terrain {
+    background: linear-gradient(to bottom, #87CEEB 0%, #E0F7FF 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .forest-terrain::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #228B22;
+    z-index: 0;
+  }
+  
+  .forest-terrain::after {
+    content: "";
+    position: absolute;
+    bottom: 40%;
+    left: 0;
+    right: 0;
+    height: 30%;
+    background-image: 
+      radial-gradient(circle at 20% 0, #006400 0, #006400 15px, transparent 15px),
+      radial-gradient(circle at 50% 0, #006400 0, #006400 25px, transparent 25px),
+      radial-gradient(circle at 80% 0, #006400 0, #006400 20px, transparent 20px),
+      radial-gradient(circle at 35% 0, #006400 0, #006400 22px, transparent 22px),
+      radial-gradient(circle at 65% 0, #006400 0, #006400 18px, transparent 18px);
+    background-size: 100px 100px;
+    background-repeat: repeat-x;
+    z-index: 1;
+  }
+  
+  /* Desert Terrain */
+  .desert-terrain {
+    background: linear-gradient(to bottom, #FF7F50 0%, #FFD700 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .desert-terrain::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: #F4A460;
+    clip-path: polygon(0% 60%, 10% 65%, 20% 60%, 30% 70%, 40% 65%, 50% 60%, 60% 65%, 70% 60%, 80% 70%, 90% 65%, 100% 60%, 100% 100%, 0% 100%);
+    z-index: 0;
+  }
+  
+  /* Volcanic Terrain */
+  .volcanic-terrain {
+    background: linear-gradient(to bottom, #4B0082 0%, #800000 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .volcanic-terrain::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60%;
+    background: #2F4F4F;
+    clip-path: polygon(0% 100%, 0% 60%, 20% 40%, 40% 60%, 60% 30%, 80% 50%, 100% 40%, 100% 100%);
+    z-index: 0;
+  }
+  
+  .volcanic-terrain::after {
+    content: "";
+    position: absolute;
+    top: 40%;
+    left: 60%;
+    width: 20px;
+    height: 30px;
+    background: linear-gradient(to bottom, #FF4500, #FF8C00);
+    border-radius: 50% 50% 30% 30%;
+    z-index: 1;
+    animation: lavaAnimation 3s ease-in-out infinite;
+  }
+  
+  @keyframes lavaAnimation {
+    0%, 100% { transform: translateY(0); opacity: 0.7; }
+    50% { transform: translateY(-10px); opacity: 1; }
+  }
+  
+  /* Arctic Terrain */
+  .arctic-terrain {
+    background: linear-gradient(to bottom, #B0E0E6 0%, #F0F8FF 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .arctic-terrain::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: white;
+    clip-path: polygon(0% 100%, 0% 50%, 15% 60%, 30% 50%, 45% 65%, 60% 50%, 75% 60%, 90% 50%, 100% 60%, 100% 100%);
+    z-index: 0;
+  }
+  
+  /* Cave Terrain */
+  .cave-terrain {
+    background: #4A4A4A;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .cave-terrain::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #2E2E2E;
+    clip-path: polygon(0% 0%, 15% 20%, 30% 5%, 45% 15%, 60% 0%, 75% 10%, 90% 0%, 100% 5%, 100% 0%);
+    z-index: 0;
+  }
+  
+  .cave-terrain::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #2E2E2E;
+    clip-path: polygon(0% 100%, 15% 80%, 30% 95%, 45% 85%, 60% 100%, 75% 90%, 90% 100%, 100% 95%, 100% 100%);
+    z-index: 0;
+  }
+  
+  /* Castle Terrain */
+  .castle-terrain {
+    background: linear-gradient(to bottom, #87CEEB 0%, #E0F7FF 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .castle-terrain::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 70%;
+    background: #808080;
+    clip-path: polygon(
+      0% 100%, 0% 40%, 
+      10% 40%, 10% 30%, 20% 30%, 20% 40%, 
+      40% 40%, 40% 20%, 50% 0%, 60% 20%, 60% 40%, 
+      80% 40%, 80% 30%, 90% 30%, 90% 40%, 
+      100% 40%, 100% 100%
+    );
+    z-index: 0;
+  }

@@ -1,0 +1,49 @@
+- name: Ensure deploy user owns all files under /mnt/persist/www/
+  become: true
+  file:
+    path: /mnt/persist/www/
+    owner: deploy
+    group: www-data
+    recurse: yes
+
+- name: Symlink Django .env
+  file:
+    src: "{{ ansistrano_shared_path }}/.env"
+    dest: "{{ ansistrano_release_path.stdout }}/src/.env"
+    state: link
+
+- name: Symlink media
+  file:
+    src: "{{ ansistrano_shared_path }}/media"
+    dest: "{{ ansistrano_release_path.stdout }}/media"
+    state: link
+
+- name: Install dependencies in Python venv (instead of virtualenv)
+  pip:
+    virtualenv: "{{ ansistrano_shared_path }}/venv"
+    virtualenv_command: "/usr/bin/python3 -m venv"
+    requirements: "{{ ansistrano_release_path.stdout }}/src/requirements/{{ stage_name }}.txt"
+
+- name: Run Migrations
+  shell: "{{ ansistrano_shared_path }}/venv/bin/python {{ ansistrano_release_path.stdout }}/src/manage.py migrate --noinput"
+  become: yes
+  become_user: deploy
+
+- name: Update wagtail search index
+  shell: "{{ ansistrano_shared_path }}/venv/bin/python {{ ansistrano_release_path.stdout }}/src/manage.py update_index"
+
+# Create a superuser after migrations
+- name: Create Django superuser with password from environment
+  shell: |
+    DECODED_PASSWORD=$(echo $DJANGO_ADMIN_PASSWORD | base64 -d)
+    {{ ansistrano_shared_path }}/venv/bin/python {{ ansistrano_release_path.stdout }}/src/manage.py create_superuser_if_none_exists --user=admin --password="$DECODED_PASSWORD" --email="admin@{{ domain }}"
+  become: yes
+  become_user: deploy
+  environment:
+    DJANGO_ADMIN_PASSWORD: "{{ lookup('env', 'DJANGO_ADMIN_PASSWORD') }}"
+
+# Add the custom homepage setup command
+- name: Set up custom homepage
+  shell: "{{ ansistrano_shared_path }}/venv/bin/python {{ ansistrano_release_path.stdout }}/src/manage.py wagtail_replace_default_site_root_page"
+  become: yes
+  become_user: deploy

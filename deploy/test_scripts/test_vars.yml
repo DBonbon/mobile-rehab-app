@@ -1,0 +1,22 @@
+ansible_: test_ansible_
+ansible_host: stage.savima.org
+ansible_port: 22
+ansible_user: deploy
+ansistrano_deploy_to: /mnt/persist/www/savima-stage
+database_name: savima_stage
+database_password: test_database_password
+database_user: savima_stage
+domain: stage.savima.org
+domain_prod: savima.org
+domain_stage: stage.savima.org
+email: info@savima.org
+lookup('password', '/dev/null chars=ascii_letters,digits length=16'): test_lookup('password',
+  '/dev/null chars=ascii_letters,digits length=16')
+next_port: test_next_port
+node_env: test_node_env
+project_slug: savima-stage
+protocol: test_protocol
+python_version: python3
+secret_key: test_secret_key
+stage_name: stage
+uwsgi_port: test_uwsgi_port

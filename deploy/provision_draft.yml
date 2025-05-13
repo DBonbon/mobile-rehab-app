@@ -1,0 +1,99 @@
+    - name: Create necessary directories
+      file:
+        path: "{{ item.path }}"
+        state: directory
+        owner: "{{ item.owner | default('deploy') }}"
+        group: "{{ item.group | default('www-data') }}"
+        mode: "{{ item.mode | default('0775') }}"
+        recurse: yes
+      loop:
+        - { path: "{{ ansistrano_deploy_to }}/shared" }
+        - { path: /mnt/persist/logs }
+        - { path: /run/uwsgi/app/{{ project_slug }}, owner: www-data, group: www-data }
+        - { path: /etc/cron.d, mode: '0755' }
+        - { path: /mnt/persist/etc }
+
+# NGINX and SSL Configuration
+
+- name: Configure NGINX and SSL
+  block:
+    # Remove default NGINX configurations
+    - name: Remove default NGINX configs
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "/etc/nginx/sites-available/default"
+        - "/etc/nginx/sites-enabled/default"
+
+    # Deploy custom NGINX configuration
+    - name: Deploy custom NGINX config
+      template:
+        src: files/nginx.conf.j2
+        dest: "/mnt/persist/nginx/conf.d/{{ project_slug }}.conf"
+        mode: '0664'
+
+    # Symlink NGINX configuration to sites-available and sites-enabled
+    - name: Symlink NGINX config
+      file:
+        src: "/mnt/persist/nginx/conf.d/{{ project_slug }}.conf"
+        dest: "{{ item }}"
+        state: link
+      loop:
+        - "/etc/nginx/sites-available/{{ project_slug }}.conf"
+        - "/etc/nginx/sites-enabled/{{ project_slug }}.conf"
+
+    # Ensure Certbot and NGINX plugin are installed
+    - name: Install Certbot and NGINX plugin
+      apt:
+        name:
+          - certbot
+          - python3-certbot-nginx
+        state: present
+        update_cache: yes
+
+    # Ensure the ACME challenges directory exists
+    - name: Create directory for ACME challenges
+      file:
+        path: /var/www/letsencrypt
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+
+    # Ensure the ACME challenges configuration file exists
+    - name: Create ACME challenges configuration
+      copy:
+        dest: /etc/nginx/snippets/acme-challenges.conf
+        content: |
+          location ^~ /.well-known/acme-challenge/ {
+              alias /var/www/letsencrypt/.well-known/acme-challenge/;
+              try_files $uri =404;
+          }
+        owner: root
+        group: root
+        mode: '0644'
+
+    # Check if SSL certificate already exists
+    - name: Check if SSL certificate exists
+      stat:
+        path: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
+      register: cert_status
+
+    # Obtain SSL certificate using Certbot with webroot plugin
+    - name: Obtain SSL certificate for {{ domain }}
+      command: >
+        certbot certonly --webroot -w /var/www/letsencrypt
+        -d {{ domain }}
+        --non-interactive --agree-tos --email {{ email }}
+      when: not cert_status.stat.exists
+
+    # Reload NGINX to apply new configurations and certificates
+    - name: Reload NGINX
+      service:
+        name: nginx
+        state: reloaded
+
+
+/mnt/persist/www/savima
+    /mnt/persist/nginx/conf.d/savima.conf

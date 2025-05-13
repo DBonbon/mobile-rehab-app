@@ -1,0 +1,64 @@
+    - name: Obtain SSL certificate for savima.org
+      command: >
+        certbot certonly --webroot -w /var/www/letsencrypt
+        --email {{ email }}
+        --d {{ domain_prod }} -d www.{{ domain_prod }}
+        --agree-tos
+        --non-interactive
+      register: certbot_result
+      changed_when: "'Congratulations' in certbot_result.stdout"
+
+
+TASK [ansistrano.deploy : Run Migrations] ****************************************************************************************************************************************
+fatal: [prod1]: FAILED! => {"changed": true, "cmd": "/mnt/persist/www/savima/shared/venv/bin/python /mnt/persist/www/savima/releases/20250131145755Z/src/manage.py migrate --noinp
+ut", "delta": "0:00:01.695884", "end": "2025-01-31 14:58:56.326765", "msg": "non-zero return code", "rc": 1, "start": "2025-01-31 14:58:54.630881", "stderr": "Traceback (most rec
+ent call last):\n  File \"/mnt/persist/www/savima/shared/venv/lib/python3.12/site-packages/django/db/backends/utils.py\", line 103, in _execute\n    return self.cursor.execute(sq
+l)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/persist/www/savima/shared/venv/lib/python3.12/site-packages/psycopg/cursor.py\", line 97, in execute\n    raise ex.with_tra
+ceback(None)\npsycopg.errors.InsufficientPrivilege: permission denied to create extension \"postgis\"\nHINT:  Must be superuser to create this extension.\n\nThe above exception w
+as the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/mnt/persist/www/savima/releases/20250131145755Z/src/manage.py\", line 36, in <mod
+ule>\n    main()\n  File \"/mnt/persist/www/savima/releases/20250131145755Z/src/manage.py\", line 32, in main\n    execute_from_command_line(sys.argv)\n  File \"/mnt/persist/www/
+savima/shared/venv/lib/python3.12/site-packages/django/core/management/__init__.py\", line 442, in execute_from_command_line\n    utility.execute()\n  File \"/mnt/persist/www/fom
+mes/shared/venv/lib/python3.12/site-packages/django/core/management/__init__.py\", line 436, in execute\n    self.fetch_command(subcommand).run_from_argv(self.argv)\n  File \"/mn
+t/persist/www/savima/shared/venv/lib/python3.12/site-packages/django/core/management/base.py\", line 413, in run_from_argv\n    self.execute(*args, **cmd_options)\n  File \"/mnt/
+persist/www/savima/shared/venv/lib/python3.12/site-packages/django/core/management/base.py\", line 459, in execute\n    output = self.handle(*args, **options)\n             ^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/persist/www/savima/shared/venv/lib/python3.12/site-packages/django/core/management/base.py\", line 107, in wrapper\n    res = handle_func(
+*args, **kwargs)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/persist/www/savima/shared/venv/lib/python3.12/site-packages/django/core/management/commands/migrate.py\",
+line 115, in handle\n    connection.prepare_database()\n  File \"/mnt/persist/www/savima/shared/venv/lib/python3.12/site-packages/django/contrib/gis/db/backends/postgis/base.py\"
+, line 119, in prepare_database\n    cursor.execute(\"CREATE EXTENSION IF NOT EXISTS postgis\")\n  File \"/mnt/persist/www/savima/shared/venv/lib/python3.12/site-packages/sentry_
+sdk/utils.py\", line 1713, in runner\n    return sentry_patched_function(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/persist/www/savima/s
+hared/venv/lib/python3.12/site-packages/sentry_sdk/integrations/django/__init__.py\", line 650, in execute\n    result = real_execute(self, sql, params)\n             ^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/persist/www/savima/shared/venv/lib/python3.12/site-packages/django/db/backends/utils.py\", line 79, in execute\n    return self._execute_with_
+wrappers(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/persist/www/savima/shared/venv/lib/python3.12/site-packages/django/db/backends/utils.py\", line 92, in _execute_
+with_wrappers\n    return executor(sql, params, many, context)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/persist/www/savima/shared/venv/lib/python3.12/site-
+packages/django/db/backends/utils.py\", line 100, in _execute\n    with self.db.wrap_database_errors:\n  File \"/mnt/persist/www/savima/shared/venv/lib/python3.12/site-packages/d
+jango/db/utils.py\", line 91, in __exit__\n    raise dj_exc_value.with_traceback(traceback) from exc_value\n  File \"/mnt/persist/www/savima/shared/venv/lib/python3.12/site-packa
+ges/django/db/backends/utils.py\", line 103, in _execute\n    return self.cursor.execute(sql)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/persist/www/savima/shared/venv/l
+ib/python3.12/site-packages/psycopg/cursor.py\", line 97, in execute\n    raise ex.with_traceback(None)\ndjango.db.utils.ProgrammingError: permission denied to create extension \
+"postgis\"\nHINT:  Must be superuser to create this extension.", "stderr_lines": ["Traceback (most recent call last):", "  File \"/mnt/persist/www/savima/shared/venv/lib/python3.
+12/site-packages/django/db/backends/utils.py\", line 103, in _execute", "    return self.cursor.execute(sql)", "           ^^^^^^^^^^^^^^^^^^^^^^^^", "  File \"/mnt/persist/www/f
+ommes/shared/venv/lib/python3.12/site-packages/psycopg/cursor.py\", line 97, in execute", "    raise ex.with_traceback(None)", "psycopg.errors.InsufficientPrivilege: permission d
+enied to create extension \"postgis\"", "HINT:  Must be superuser to create this extension.", "", "The above exception was the direct cause of the following exception:", "", "Tra
+ceback (most recent call last):", "  File \"/mnt/persist/www/savima/releases/20250131145755Z/src/manage.py\", line 36, in <module>", "    main()", "  File \"/mnt/persist/www/fomm
+es/releases/20250131145755Z/src/manage.py\", line 32, in main", "    execute_from_command_line(sys.argv)", "  File \"/mnt/persist/www/savima/shared/venv/lib/python3.12/site-packa
+ges/django/core/management/__init__.py\", line 442, in execute_from_command_line", "    utility.execute()", "  File \"/mnt/persist/www/savima/shared/venv/lib/python3.12/site-pack
+ages/django/core/management/__init__.py\", line 436, in execute", "    self.fetch_command(subcommand).run_from_argv(self.argv)", "  File \"/mnt/persist/www/savima/shared/venv/lib
+/python3.12/site-packages/django/core/management/base.py\", line 413, in run_from_argv", "    self.execute(*args, **cmd_options)", "  File \"/mnt/persist/www/savima/shared/venv/l
+ib/python3.12/site-packages/django/core/management/base.py\", line 459, in execute", "    output = self.handle(*args, **options)", "             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", "
+  File \"/mnt/persist/www/savima/shared/venv/lib/python3.12/site-packages/django/core/management/base.py\", line 107, in wrapper", "    res = handle_func(*args, **kwargs)", "
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^", "  File \"/mnt/persist/www/savima/shared/venv/lib/python3.12/site-packages/django/core/management/commands/migrate.py\", line 115, in handle"
+, "    connection.prepare_database()", "  File \"/mnt/persist/www/savima/shared/venv/lib/python3.12/site-packages/django/contrib/gis/db/backends/postgis/base.py\", line 119, in p
+repare_database", "    cursor.execute(\"CREATE EXTENSION IF NOT EXISTS postgis\")", "  File \"/mnt/persist/www/savima/shared/venv/lib/python3.12/site-packages/sentry_sdk/utils.py
+\", line 1713, in runner", "    return sentry_patched_function(*args, **kwargs)", "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", "  File \"/mnt/persist/www/savima/shared/
+venv/lib/python3.12/site-packages/sentry_sdk/integrations/django/__init__.py\", line 650, in execute", "    result = real_execute(self, sql, params)", "             ^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^", "  File \"/mnt/persist/www/savima/shared/venv/lib/python3.12/site-packages/django/db/backends/utils.py\", line 79, in execute", "    return self._execute_wit
+h_wrappers(", "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^", "  File \"/mnt/persist/www/savima/shared/venv/lib/python3.12/site-packages/django/db/backends/utils.py\", line 92, in _ex
+ecute_with_wrappers", "    return executor(sql, params, many, context)", "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", "  File \"/mnt/persist/www/savima/shared/venv/lib/pyth
+on3.12/site-packages/django/db/backends/utils.py\", line 100, in _execute", "    with self.db.wrap_database_errors:", "  File \"/mnt/persist/www/savima/shared/venv/lib/python3.12
+/site-packages/django/db/utils.py\", line 91, in __exit__", "    raise dj_exc_value.with_traceback(traceback) from exc_value", "  File \"/mnt/persist/www/savima/shared/venv/lib/p
+ython3.12/site-packages/django/db/backends/utils.py\", line 103, in _execute", "    return self.cursor.execute(sql)", "           ^^^^^^^^^^^^^^^^^^^^^^^^", "  File \"/mnt/persis
+t/www/savima/shared/venv/lib/python3.12/site-packages/psycopg/cursor.py\", line 97, in execute", "    raise ex.with_traceback(None)", "django.db.utils.ProgrammingError: permission denied to create extension \"postgis\"", "HINT:  Must be superuser to create this extension."], "stdout": "", "stdout_lines": []}
+
+PLAY RECAP ***********************************************************************************************************************************************************************
+prod1                      : ok=29   changed=15   unreachable=0    failed=1    skipped=3    rescued=0    ignored=0
+
+(venv) nuser

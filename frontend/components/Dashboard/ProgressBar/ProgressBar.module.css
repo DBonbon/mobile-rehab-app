@@ -1,0 +1,38 @@
+.Root {
+}
+/* progressBar.module.css */
+.progressContainer {
+    margin: 16px 0;
+  }
+  
+  .progressInfo {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .progressBarOuter {
+    height: 16px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .progressBarInner {
+    height: 100%;
+    transition: width 0.3s ease;
+  }
+  
+  .lowProgress {
+    background-color: #ff6b6b;
+  }
+  
+  .midProgress {
+    background-color: #feca57;
+  }
+  
+  .highProgress {
+    background-color: #1dd1a1;
+  }

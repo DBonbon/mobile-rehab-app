@@ -1,0 +1,21 @@
+[Unit]
+Description=uWSGI savima-stage Instance
+After=network.target
+
+[Service]
+Type=notify
+User=www-data
+Group=www-data
+RuntimeDirectory=uwsgi-stage
+RuntimeDirectoryMode=755
+ExecStartPre=/bin/mkdir -p /run/uwsgi/app/savima-stage
+ExecStartPre=/bin/chown www-data:www-data /run/uwsgi/app/savima-stage
+ExecStartPre=/bin/chmod 755 /run/uwsgi/app/savima-stage
+ExecStart=/usr/bin/uwsgi --ini /mnt/persist/uwsgi/conf.d/savima-stage.ini
+Restart=on-failure
+KillSignal=SIGTERM
+StandardError=syslog
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target

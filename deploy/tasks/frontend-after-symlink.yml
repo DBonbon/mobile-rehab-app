@@ -1,0 +1,23 @@
+---
+# Tasks to run after symlink creation (for backend)
+# frontend-after-symlink.yml
+
+- name: Restart uWSGI service
+  systemd:
+    name: uwsgi
+    state: restarted
+  become: yes
+
+- name: Check if nginx config is valid
+  shell: nginx -t
+  register: nginx_config_check
+  check_mode: no
+  changed_when: false
+  become: yes
+
+- name: Reload Nginx if backend config changed
+  systemd:
+    name: nginx
+    state: reloaded
+  become: yes
+  when: nginx_config_check.rc == 0

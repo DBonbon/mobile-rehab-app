@@ -1,0 +1,83 @@
+# GitHub Issue Manager - Command Reference
+
+Here are the commands to use with the enhanced Issue Manager along with a sample scenario:
+
+## Commands and Flags
+
+### 1. Create a New Issue
+
+```bash
+python issue_manager.py create <template_path>
+```
+
+### 2. Create a Subissue
+
+```bash
+python issue_manager.py subissue <parent_issue_number> <template_path>
+```
+
+### 3. Update an Issue
+
+```bash
+python issue_manager.py update <issue_number> [options]
+```
+
+**Options:**
+- `--template` or `-t`: Path to update template file
+- `--status` or `-s`: Update status (`investigation`, `solution`, `implemented`, `verified`)
+- `--comment` or `-c`: Add a comment to the issue
+
+## Sample Scenario
+
+Here's a complete workflow scenario for your documentation:
+
+```markdown
+# Issue Manager Usage Examples
+
+## CI/CD Pipeline Issue Workflow
+
+### 1. Create Parent Issue for Pipeline Failure
+
+```bash
+python issue_manager.py create templates/pipeline_failure.md
+```
+Creates issue #42: "CI Pipeline Failure"
+
+### 2. Create Subissues for Specific Components
+
+```bash
+# Create subissue for test failures
+python issue_manager.py subissue 42 templates/test_failures.md
+
+# Create subissue for deployment issues
+python issue_manager.py subissue 42 templates/deployment_issues.md
+```
+Creates issues #43 and #44, both linked to parent issue #42
+
+### 3. Update Issues as Investigation Progresses
+
+```bash
+# Mark test failure issue as under investigation
+python issue_manager.py update 43 --status investigation --comment "Starting investigation of test timeouts"
+
+# Add findings from investigation
+python issue_manager.py update 43 --template templates/db_connection_update.md
+
+# Mark issue as having a solution identified
+python issue_manager.py update 43 --status solution --comment "Found solution, will implement tomorrow"
+
+# Mark issue as implemented
+python issue_manager.py update 43 --status implemented --comment "Fix deployed to staging"
+
+# Add final verification
+python issue_manager.py update 43 --status verified --comment "All tests now passing in CI"
+```
+
+### 4. Full Command with Multiple Options
+
+```bash
+python issue_manager.py update 42 --template templates/resolution_summary.md --status verified --comment "All subissues resolved, pipeline now stable"
+```
+```
+
+This provides a clear, concise reference for the commands and a realistic workflow example that demonstrates how to use the tool effectively for managing complex issues with subissues and updates.

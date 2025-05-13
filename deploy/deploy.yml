@@ -1,0 +1,112 @@
+---
+- name: Deploy Django and Next.js application
+  hosts: all
+  become: true
+
+  vars:
+    ansistrano_deploy_from: "{{ playbook_dir }}/../src"  # Only deploy backend from src
+    ansistrano_keep_releases: 3
+    ansistrano_deploy_via: rsync
+    ansistrano_after_setup_tasks_file: "tasks/after-setup.yml"
+    ansistrano_after_update_code_tasks_file: "tasks/after-update-code.yml"
+    ansistrano_after_symlink_tasks_file: "tasks/after-symlink.yml"
+    ansistrano_allow_anonymous_stats: no
+
+  roles:
+    - { role: ansistrano.deploy }
+
+  post_tasks:
+    - name: Ensure frontend directory exists in the new release
+      file:
+        path: "{{ ansistrano_release_path.stdout }}/frontend"
+        state: directory
+        owner: deploy
+        group: www-data
+        mode: 0775
+
+    - name: Sync frontend separately into the new release directory
+      synchronize:
+        src: "{{ playbook_dir }}/../frontend/"
+        dest: "{{ ansistrano_release_path.stdout }}/frontend"
+        rsync_opts:
+          - "--delete"
+          - "--exclude=.env"
+          - "--exclude=.next/"
+          - "--exclude=node_modules/"
+
+    - name: Symlink Next.js .env (Fix frontend path)
+      file:
+        src: "{{ ansistrano_shared_path }}/.env.next"
+        dest: "{{ ansistrano_release_path.stdout }}/frontend/.env.local"
+        state: link
+
+    - name: Install node modules
+      npm:
+        path: "{{ ansistrano_release_path.stdout }}/frontend/"
+        production: yes
+
+    - name: Ensure deploy user owns frontend directory
+      file:
+        path: "{{ ansistrano_release_path.stdout }}/frontend"
+        owner: deploy
+        group: www-data
+        mode: 0775
+        recurse: yes
+
+    - name: Run npm clean install for Next.js
+      shell: "npm ci || npm install"
+      args:
+        chdir: "{{ ansistrano_release_path.stdout }}/frontend"
+      become: yes
+      become_user: deploy
+
+
+    - name: Run npm audit fix for Next.js
+      shell: "npm audit fix --force"
+      args:
+      become: yes
+      become_user: deploy
+      ignore_errors: yes  # Ignore non-zero return codes
+
+    - name: Modify next.config.js to disable ESLint
+      shell: |
+        sed -i '/let nextConfig = {/a \    eslint: { ignoreDuringBuilds: true },' next.config.js
+      args:
+        chdir: "{{ ansistrano_release_path.stdout }}/frontend"
+      become: yes
+      become_user: deploy
+
+    - name: Run npm build for Next.js
+      shell: "npm run build"
+      args:
+        chdir: "{{ ansistrano_release_path.stdout }}/frontend"
+      become: yes
+      become_user: deploy
+
+    - name: Reload PM2 app
+      become: yes
+      become_user: deploy
+      shell: "pm2 delete {{ project_slug }} || true && pm2 start /mnt/persist/nodejs/{{ project_slug }}.yml --update-env"
+
+    - name: Save PM2 process list
+      become: yes
+      become_user: deploy
+      shell: "pm2 save"
+
+    - name: Test Nginx configuration before restart
+      shell: "nginx -t"
+      register: nginx_test
+      ignore_errors: yes
+
+    - name: Restart Nginx only if configuration is valid
+      service:
+        name: nginx
+        state: restarted
+      when: nginx_test.rc == 0
+
+    - name: Ensure `current/` symlink points to the latest release
+      file:
+        src: "{{ ansistrano_release_path.stdout }}"
+        dest: "{{ ansistrano_deploy_to }}/current"
+        state: link
+        force: yes

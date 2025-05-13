@@ -1,0 +1,51 @@
+.Root {
+}
+/* components/Dashboard/TaskSelector/taskSelector.module.css */
+.selectorContainer {
+  margin: 16px 0;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.selectorControls {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.taskDropdown {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: white;
+}
+
+.selectButton {
+  padding: 8px 16px;
+  background-color: #4b7bec;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.selectButton:hover {
+  background-color: rgb(56, 214, 56);
+}
+
+.selectButton:disabled {
+  background-color: #a5b1c2;
+  cursor: not-allowed;
+}
+
+.emptyState {
+  color: #777;
+  font-style: italic;
+  margin-top: 12px;
+  text-align: center;
+}

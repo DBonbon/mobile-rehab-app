@@ -1,0 +1,19 @@
+# deploy-backend.yml
+- name: Deploy backend application
+  hosts: webservers
+  vars:
+    release_version: "{{ lookup('pipe', 'date +%Y%m%d%H%M%SZ') }}"
+  
+  roles:
+    - role: ansistrano.deploy
+      vars:
+        ansistrano_deploy_from: "{{ playbook_dir }}/../src"
+        ansistrano_release_version: "{{ release_version }}"
+        ansistrano_keep_releases: 3
+        ansistrano_shared_paths:
+          - "media"
+          - "venv"
+        ansistrano_shared_files:
+          - ".env"
+        ansistrano_after_setuptasks_file: "{{ playbook_dir }}/tasks/after-setup.yml"
+        ansistrano_after_update_code_tasks_file: "{{ playbook_dir }}/tasks/after-update-code.yml"

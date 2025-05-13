@@ -1,0 +1,42 @@
+[uwsgi]
+# Process Settings # uwsgi.ini.j2
+master = true
+processes = 4
+enable-threads = true
+py-call-uwsgi-fork-hooks = true  # Added for Sentry compatibility
+stats = 127.0.0.1:{{ uwsgi_port }}
+
+# Socket Settings
+socket = /run/uwsgi/app/{{ project_slug }}/socket
+chmod-socket = 666
+vacuum = true
+
+# Application settings
+chdir = {{ ansistrano_deploy_to }}/current/src/teki
+virtualenv = {{ ansistrano_deploy_to }}/shared/venv
+module = teki.wsgi:application
+pythonpath = {{ ansistrano_deploy_to }}/current/src
+
+# User settings
+uid = www-data
+gid = www-data
+
+# Logging
+logto = /var/log/uwsgi/{{ project_slug }}.log
+
+# Plugin
+plugins = python3
+
+# Clean up and pid management
+pidfile = /run/uwsgi/%(name).pid
+vacuum = true
+die-on-term = true
+
+# Environment file
+env = DJANGO_SETTINGS_MODULE=teki.settings.{{ stage_name }}
+for-readline = {{ ansistrano_deploy_to }}/shared/.env
+  env = %(_)
+endfor =
+
+# Buffer size for handling large requests
+buffer-size = 32768

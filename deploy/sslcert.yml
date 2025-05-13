@@ -1,0 +1,109 @@
+---
+- name: Setup SSL Certificate with Certbot and NGINX
+  hosts: all
+  become: true
+
+  vars:
+    certbot_email: "{{ email }}"
+    domain: "{{ domain_prod }}"
+    webroot_path: "/var/www/letsencrypt"
+    nginx_conf_path: "/etc/nginx/sites-available/{{ domain }}"
+
+  tasks:
+    - name: Install Certbot and dependencies
+      apt:
+        name:
+          - certbot
+          - python3-certbot-nginx
+        state: present
+        update_cache: yes
+
+    - name: Create ACME challenge directory
+      file:
+        path: "{{ webroot_path }}/.well-known/acme-challenge"
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+
+    - name: Ensure ACME challenge location exists in NGINX config
+      blockinfile:
+        path: "{{ nginx_conf_path }}"
+        marker: "# ACME CHALLENGE BLOCK"
+        block: |
+          location ^~ /.well-known/acme-challenge/ {
+              alias {{ webroot_path }}/.well-known/acme-challenge/;
+              allow all;
+          }
+      notify: Reload NGINX
+
+    - name: Test NGINX configuration
+      command: nginx -t
+      register: nginx_test_result
+      changed_when: false
+      failed_when: nginx_test_result.rc != 0
+
+    - name: Reload NGINX
+      service:
+        name: nginx
+        state: reloaded
+
+    - name: Obtain SSL certificate
+      command: >
+        certbot certonly --webroot -w {{ webroot_path }} -d {{ domain }} -d www.{{ domain }}
+        --email {{ certbot_email }} --agree-tos --non-interactive --quiet
+
+    - name: Generate Diffie-Hellman key (dhparam.pem)
+      command: openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+      args:
+        creates: /etc/ssl/certs/dhparam.pem
+
+    - name: Ensure NGINX is configured for SSL
+      blockinfile:
+        path: "{{ nginx_conf_path }}"
+        marker: "# SSL CONFIGURATION BLOCK"
+        block: |
+          listen 443 ssl http2;
+          listen [::]:443 ssl http2;
+
+          ssl_certificate /etc/letsencrypt/live/{{ domain }}/fullchain.pem;
+          ssl_certificate_key /etc/letsencrypt/live/{{ domain }}/privkey.pem;
+          ssl_protocols TLSv1.2 TLSv1.3;
+          ssl_prefer_server_ciphers on;
+          ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384';
+          ssl_session_cache shared:SSL:10m;
+          ssl_session_timeout 1d;
+          ssl_session_tickets off;
+          ssl_stapling on;
+          ssl_stapling_verify on;
+          resolver 8.8.8.8 8.8.4.4 valid=300s;
+          resolver_timeout 5s;
+          ssl_dhparam /etc/ssl/certs/dhparam.pem;
+          add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" always;
+      notify: Reload NGINX
+
+    - name: Ensure HTTP redirects to HTTPS
+      lineinfile:
+        path: "{{ nginx_conf_path }}"
+        insertbefore: BOF
+        line: "return 301 https://$host$request_uri;"
+        state: present
+      notify: Reload NGINX
+
+    - name: Enable Certbot auto-renewal via systemd
+      command: systemctl enable certbot.timer
+      changed_when: false
+
+    - name: Start Certbot auto-renewal timer
+      command: systemctl start certbot.timer
+      changed_when: false
+
+    - name: Verify Certbot renewal setup
+      command: systemctl list-timers --all | grep certbot
+      changed_when: false
+
+  handlers:
+    - name: Reload NGINX
+      service:
+        name: nginx
+        state: reloaded

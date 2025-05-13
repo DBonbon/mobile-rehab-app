@@ -1,0 +1,19 @@
+# .vercelignore
+# Ignore backend files
+wagtail/
+*/wagtail/*
+backend/
+*/backend/*
+*.py
+requirements.txt
+Pipfile
+Pipfile.lock
+venv/
+__pycache__/
+*.pyc
+db.sqlite3
+media/
+**/*.ts
+**/*.tsx
+**/tsconfig.json
+**/next-env.d.ts

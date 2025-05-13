@@ -1,0 +1,22 @@
+{
+    "name": "Savima App",
+    "short_name": "Savima",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff",
+    "orientation": "portrait",
+    "icons": [
+      {
+        "src": "/img/white_circle.png",
+        "type": "image/png",
+        "sizes": "192x192"
+      },
+      {
+        "src": "/img/logo.svg",  // ⛳ add leading slash for consistency
+        "type": "image/svg+xml", // ✅ correct MIME for SVG
+        "sizes": "512x512"
+      }
+    ]
+  }
+  

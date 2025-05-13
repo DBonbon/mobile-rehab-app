@@ -1,0 +1,76 @@
+/* Container for RichText */
+.Container {
+    padding: 10px;
+    line-height: 1.6; /* Improved readability */
+    font-family: Arial, sans-serif; /* Set a default font family */
+}
+
+/* Paragraphs */
+.Container p {
+    margin: 0 0 1em; /* Space between paragraphs */
+}
+
+/* Headers */
+.Container h2 {
+    font-size: 1.5em;
+    margin: 1em 0 0.5em;
+    font-weight: bold;
+}
+
+.Container h3 {
+    font-size: 1.3em;
+    margin: 1em 0 0.5em;
+    font-weight: bold;
+}
+
+.Container h4 {
+    font-size: 1.1em;
+    margin: 1em 0 0.5em;
+    font-weight: bold;
+}
+
+/* Bold and Italic Text */
+.Container b,
+.Container strong {
+    font-weight: bold;
+}
+
+.Container i,
+.Container em {
+    font-style: italic;
+}
+
+/* Lists */
+.Container ul,
+.Container ol {
+    margin: 0 0 1em;
+    padding-left: 20px; /* Indent lists */
+}
+
+.Container li {
+    margin-bottom: 0.5em;
+}
+
+/* Numbered and Bulleted Lists */
+.Container ul {
+    list-style-type: disc; /* Bulleted list style */
+}
+
+.Container ol {
+    list-style-type: decimal; /* Numbered list style */
+}
+
+/* Line Break */
+.Container br {
+    content: ""; /* Ensures line break is respected */
+    display: block;
+    margin-bottom: 0.5em;
+}
+
+/* Horizontal Line */
+.Container hr {
+    border: none;
+    border-top: 1px solid #ccc; /* Grey line */
+    margin: 1.5em 0; /* Space around the line */
+}
+

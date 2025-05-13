@@ -1,0 +1,55 @@
+# Django/Wagtail logs
+/var/log/{{ project_slug }}/*.log {
+    daily
+    missingok
+    rotate 14
+    compress
+    delaycompress
+    notifempty
+    create 0640 www-data www-data
+}
+
+# uWSGI logs
+/var/log/uwsgi/*.log {
+    daily
+    missingok
+    rotate 14
+    compress
+    delaycompress
+    notifempty
+    create 0640 www-data www-data
+    sharedscripts
+    postrotate
+        systemctl reload uwsgi
+    endscript
+}
+
+# Nginx logs
+/var/log/nginx/*{{ project_slug }}*.log {
+    daily
+    missingok
+    rotate 14
+    compress
+    delaycompress
+    notifempty
+    create 0640 www-data www-data
+    sharedscripts
+    postrotate
+        systemctl reload nginx
+    endscript
+}
+
+# PM2/NextJS logs
+/home/deploy/.pm2/logs/{{ project_slug }}*.log {
+    daily
+    missingok
+    rotate 14
+    compress
+    delaycompress
+    notifempty
+    create 0640 deploy www-data
+    sharedscripts
+    postrotate
+        sudo -u deploy pm2 reload {{ project_slug }}
+    endscript
+}

@@ -1,0 +1,13 @@
+  # stages/stage.yml
+  webservers:
+    hosts:
+      stage1:
+        ansible_user: deploy
+        ansible_port: 22
+        ansible_host: stage.savima.org
+        domain: stage.savima.org
+        stage_name: stage
+        ansistrano_deploy_to: /mnt/persist/www/savima-stage
+        database_name: savima_stage
+        database_user: savima_stage
+        project_slug: savima-stage

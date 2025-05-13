@@ -1,0 +1,8 @@
+# Extend base.txt
+-r base.txt
+
+# Add production extra requirements here
+
+django-cors-headers
+dj-database-url==1.0.0
+psycopg2-binary==2.9.5

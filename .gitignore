@@ -1,0 +1,126 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules/
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+junit.xml
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
+# production
+/build
+/dist
+
+# misc
+.DS_Store
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+*.pem
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# npm/yarn
+node_modules/
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# nextjs
+.next/
+out/
+build/
+public/sw.js
+public/workbox-*.js
+next.config.mjs
+next.config.js
+
+# Sentry
+.sentryclirc
+.sentry.*
+
+# TypeScript files (as requested)
+*.ts
+*.tsx
+tsconfig.json
+next-env.d.ts
+
+# Python/Django specific
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+*.pyc
+db.sqlite3
+media/
+
+# Docker artifacts
+docker/data/
+docker-compose.override.yml
+
+# Backup files
+*.bak
+*.backup
+*.swp
+*~
+
+# Private keys and certificates
+*.key
+*.pem
+cert/
+certs/
+ssl/
+
+# IDE specific files
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.tmproj
+*.esproj
+nbproject/
+.DS_Store
+.editorconfig
+
+# Local development
+.localrc
+.nvmrc
+.python-version

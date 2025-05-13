@@ -1,0 +1,9 @@
+# stages/prod.yml
+webservers:
+  hosts:
+    prod1:
+      ansible_user: deploy
+      ansible_port: 22
+      ansible_host: savima.org
+      domain: savima.org
+      stage_name: prod

@@ -1,0 +1,208 @@
+/* containers/ProfilePage/ProfilePage.module.css */
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 24px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .loading {
+    text-align: center;
+    padding: 40px;
+    font-size: 18px;
+    color: #6b7280;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  .logoutButton {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+  }
+  
+  .logoutButton:hover {
+    background-color: #b91c1c;
+  }
+  
+  .error {
+    background-color: #fee2e2;
+    border: 1px solid #ef4444;
+    color: #b91c1c;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+  }
+  
+  .success {
+    background-color: #d1fae5;
+    border: 1px solid #10b981;
+    color: #047857;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .formRow {
+    display: flex;
+    gap: 16px;
+  }
+  
+  @media (max-width: 640px) {
+    .formRow {
+      flex-direction: column;
+    }
+  }
+  
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+  }
+  
+  .label {
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  
+  .input, .textarea, .select {
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    background-color: #f9fafb;
+    transition: border-color 0.15s ease-in-out;
+  }
+  
+  .input:focus, .textarea:focus, .select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+  }
+  
+  .textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  
+  .helpText {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 4px;
+  }
+  
+  .button {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+    align-self: flex-start;
+  }
+  
+  .button:hover {
+    background-color: #2563eb;
+  }
+  
+  .button:disabled {
+    background-color: #93c5fd;
+    cursor: not-allowed;
+  }
+  
+  .actions {
+    margin-top: 8px;
+  }
+  /* Add these to your ProfilePage.module.css */
+.dangerZone {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border: 1px solid #fecaca;
+  border-radius: 0.5rem;
+  background-color: #fee2e2;
+}
+
+.dangerTitle {
+  color: #b91c1c;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.deleteButton {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.deleteButton:hover {
+  background-color: #dc2626;
+}
+
+.deleteConfirm {
+  margin-top: 1rem;
+}
+
+.deleteActions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.cancelButton {
+  background-color: #6b7280;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.cancelButton:hover {
+  background-color: #4b5563;
+}
+
+.confirmDeleteButton {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.confirmDeleteButton:hover {
+  background-color: #b91c1c;
+}

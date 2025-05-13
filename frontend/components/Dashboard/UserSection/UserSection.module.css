@@ -1,0 +1,115 @@
+/* UserSection.module.css */
+.userContainer {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 0;
+  }
+  
+  .userAvatarSection {
+    flex-shrink: 0;
+  }
+  
+  .userIcon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #4b7bec;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+  
+  .userIconSvg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .userAvatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .userInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .userName {
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .userActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .actionButton, .logoutButton {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .actionButton {
+    background-color: #f1f5f9;
+    color: #4b5563;
+  }
+  
+  .logoutButton {
+    background-color: #fecaca;
+    color: #b91c1c;
+  }
+  
+  .actionButton:hover {
+    background-color: #e2e8f0;
+  }
+  
+  .logoutButton:hover {
+    background-color: #fee2e2;
+  }
+  
+  .actionIcon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 480px) {
+    .userContainer {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .userActions {
+      justify-content: center;
+    }
+    
+    .actionButton span, .logoutButton span {
+      display: none;
+    }
+    
+    .actionButton, .logoutButton {
+      padding: 8px;
+    }
+    
+    .actionIcon {
+      width: 16px;
+      height: 16px;
+    }
+  }

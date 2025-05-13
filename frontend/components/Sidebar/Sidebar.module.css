@@ -1,0 +1,39 @@
+.Root {
+}
+/* components/Sidebar/Sidebar.module.css */
+
+.Sidebar {
+    width: 200px;
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-right: 1px solid #ddd;
+}
+
+.Title {
+    font-size: 1.25em;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.Nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.SidebarButton {
+    display: block;
+    padding: 0.5rem;
+    color: #007bff;
+    text-decoration: none;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.SidebarButton:hover {
+    background-color: #007bff;
+    color: #fff;
+}

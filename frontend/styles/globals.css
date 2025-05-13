@@ -1,0 +1,343 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/inter-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/inter-semibold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/fonts/inter-light.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/inter-bold.woff2') format('woff2');
+}
+
+/* Base styling */
+html, body {
+    font-family: 'Inter', sans-serif;
+    padding: 0;
+    margin: 0;
+    /*font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;*/
+    background-color: var(--neutral-light);
+    color: var(--neutral-dark);
+}
+
+/* globals.css */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', sans-serif; /* Ensure all headings use the same font */
+    font-weight: 300; /* Set default to light */
+    letter-spacing: -0.05em; /* Tighten spacing for all headings */
+    margin-bottom: 1rem; /* Space after each heading */
+}
+
+/* Individual settings for each heading tag */
+h1 {
+    font-size: 2.5rem;
+    line-height: 1.2;
+}
+
+h2 {
+    font-size: 2rem;
+    line-height: 1.3;
+}
+
+h3 {
+    font-size: 1.75rem;
+    line-height: 1.4;
+}
+
+h4 {
+    font-size: 1.5rem;
+    line-height: 1.5;
+}
+
+h5 {
+    font-size: 1.25rem;
+    line-height: 1.6;
+}
+
+h6 {
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+/* Responsive behavior for larger screens */
+@media (min-width: 1024px) {
+    h1 {
+        font-size: 3rem;
+    }
+    h2 {
+        font-size: 2.5rem;
+    }
+    h3 {
+        font-size: 2rem;
+    }
+    h4 {
+        font-size: 1.75rem;
+    }
+    h5 {
+        font-size: 1.5rem;
+    }
+    h6 {
+        font-size: 1.25rem;
+    }
+}
+
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #4CAF50;
+    --secondary-color: #FF9800;
+    --accent-color: #03A9F4;
+    --neutral-light: #F5F5F5;
+    --neutral-dark: #9E9E9E;
+    --hover-background: #FFD699;
+}
+
+/* Sections for structure */
+.section {
+    margin-bottom: var(--section-top-bottom);  /* Apply margin only below */
+}
+
+.datablock {
+    margin-bottom: var(--datablock-top-bottom); /* Apply margin only below */
+}
+
+.subheader {
+    margin-bottom: var(--subheader-top-bottom); /* Smallest margin for text spacing */
+}
+
+/* Header and Footer specific styling */
+header {
+    margin-bottom: var(--section-top-bottom); /* Ensure there is space below the header */
+}
+
+footer {
+    margin-top: var(--section-top-bottom);    /* Ensure space above the footer */
+}
+
+/* Text elements should have padding on left and right */
+h1, h2, h3, h4, h5, h6, p {
+    padding-left: 1rem;   /* Consistent padding for text elements */
+    padding-right: 1rem;
+}
+
+/* Buttons should have padding for better alignment */
+/* Button styling */
+
+
+/* Base card styling */
+.card {
+  @apply bg-white shadow-lg rounded-lg overflow-hidden transition-transform duration-200;
+  max-width: 100%; /* Ensure card adjusts to the screen size */
+}
+
+/* Max width for cards */
+@media (min-width: 640px) {
+  .card {
+    max-width: 200px; /* Small screens - up to 300px */
+  }
+}
+
+@media (min-width: 768px) {
+  .card {
+    max-width: 250px; /* Medium screens - up to 400px */
+  }
+}
+
+@media (min-width: 1024px) {
+  .card {
+    max-width: 300px; /* Large screens - up to 500px */
+  }
+}
+
+/* Card hover effect */
+.card:hover {
+  @apply shadow-xl transform scale-105;
+}
+
+/* Card Header */
+.card-header {
+  @apply flex flex-col justify-start items-start space-y-2; /* Flexbox alignment and spacing between items */
+  padding: 1rem; /* Adjust padding to ensure uniform spacing */
+  padding-left: 2rem;
+}
+
+/* Reset margin and padding for text elements to ensure consistent alignment */
+.card-header h4, .card-header p, .card-header small,
+.card-footer p, .card-footer small {
+  margin: 0;  /* Remove default margins */
+  padding: 0; /* Ensure no padding */
+}
+/* Card Header styling for text */
+.card-header p {
+  @apply text-xs uppercase font-bold text-secondary;
+}
+
+.card-header small {
+  @apply text-neutralDark;
+}
+
+.card-header h4 {
+  @apply font-bold text-2xl text-primary;
+}
+
+/* Card Body */
+.card-body {
+  @apply flex justify-center;
+}
+
+/* Limit image size inside the card */
+.card-body img {
+  @apply object-cover rounded-lg;
+  max-width: 250px; /* Max width for image */
+  max-height: 200px; /* Max height for image */
+}
+
+/* Ensure consistent alignment inside card-footer */
+.card-footer {
+  @apply flex flex-col justify-start items-start space-y-2; /* Same as header */
+  padding: 1rem;
+  padding-left: 2rem;
+}
+
+/* No padding on images */
+img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+}
+
+/* Containers for images */
+.image-container {
+    position: relative;
+    overflow: hidden;
+    max-width: 100%;
+}
+
+/* Responsive images */
+@media (min-width: 640px) {
+    .image-container {
+        max-height: 300px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .image-container {
+        max-height: 500px;
+    }
+}
+
+
+/* Base link styling for links */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.3s ease-in-out;
+}
+
+a:hover {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+
+/* Modal backdrop (opaque background) */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.75); /* Opaque backdrop */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Ensure it's above other elements */
+}
+
+/* Modal container (centered and scrollable content) */
+.modal {
+  background-color: white;
+  border-radius: 0.5rem; /* Rounded corners */
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto; /* Scrollable inside */
+  padding: 1rem;
+}
+
+/* Modal content */
+.modal-content {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Modal sections */
+.modal-header, .modal-body, .modal-footer {
+  padding: 1rem;
+}
+
+/* Optional: Differentiating the sections */
+.modal-header {
+  border-bottom: 1px solid #e5e7eb; /* Light border for separation */
+}
+
+.modal-footer {
+  border-top: 2px solid #e5e7eb;
+  text-align: right;
+}
+/* Add this to your global CSS */
+svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Override box-sizing for SVG and its children */
+svg, svg * {
+  box-sizing: content-box;
+}
+
+
+/* Add this to your global.css or create a shared styles module */
+.dashboardSectionHeader {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #edf2f7;
+}

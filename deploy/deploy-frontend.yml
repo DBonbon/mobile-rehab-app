@@ -1,0 +1,17 @@
+# deploy-frontend.yml
+- name: Deploy frontend application
+  hosts: webservers
+  vars:
+    release_version: "{{ lookup('pipe', 'date +%Y%m%d%H%M%SZ') }}"
+  
+  roles:
+    - role: ansistrano.deploy
+      vars:
+        ansistrano_deploy_from: "{{ playbook_dir }}/../frontend"
+        ansistrano_release_version: "{{ release_version }}"
+        ansistrano_keep_releases: 3
+        ansistrano_shared_paths: []
+        ansistrano_shared_files:
+          - ".env.next"
+        ansistrano_after_update_code_tasks_file: "{{ playbook_dir }}/tasks/frontend-after-update-code.yml"
+        ansistrano_after_symlink_tasks_file: "{{ playbook_dir }}/tasks/frontend-after-symlink.yml"

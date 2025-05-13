@@ -1,0 +1,21 @@
+[Unit]
+Description=uWSGI {{ project_slug }} Instance
+After=network.target
+
+[Service]
+Type=notify
+User=www-data
+Group=www-data
+RuntimeDirectory=uwsgi{% if stage_name == "stage" %}-{{ stage_name }}{% endif %}
+RuntimeDirectoryMode=755
+ExecStartPre=/bin/mkdir -p /run/uwsgi/app/{{ project_slug }}
+ExecStartPre=/bin/chown www-data:www-data /run/uwsgi/app/{{ project_slug }}
+ExecStartPre=/bin/chmod 755 /run/uwsgi/app/{{ project_slug }}
+ExecStart=/usr/bin/uwsgi --ini /mnt/persist/uwsgi/conf.d/{{ project_slug }}.ini
+Restart=on-failure
+KillSignal=SIGTERM
+StandardError=syslog
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target

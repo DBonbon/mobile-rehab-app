@@ -1,0 +1,12 @@
+apps:
+  - name: {{ project_slug }}
+    script: {{ ansistrano_deploy_to }}/current/frontend/.next/standalone/server.js
+    cwd: {{ ansistrano_deploy_to }}/current/frontend
+    exec_mode: fork
+    instances: 1
+    max_memory_restart: "350M"
+    env:
+      PORT: {{ next_port }}
+      NODE_ENV: {{ node_env | default('production') }}
+      WAGTAIL_API_URL: "{{ protocol | default('https') }}://{{ domain }}/wt/api/nextjs"
+      WAGTAIL_PUBLIC_WAGTAIL_API_URL: "/wt/api/nextjs"

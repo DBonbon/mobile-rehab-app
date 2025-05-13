@@ -1,0 +1,47 @@
+/* components/header/header.module.css */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    background-color: white;
+  }
+  
+  .homeIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: #f5f7fa;
+    color: #bc4bec;
+    text-decoration: none;
+  }
+  
+  .spacer {
+    width: 2.5rem;
+  }
+  
+  .appTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+    text-align: center;
+  }
+  
+  .dashboardButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: #bc4bec;
+    color: white;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+  }

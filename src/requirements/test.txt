@@ -1,0 +1,16 @@
+# src/requirements/test.txt
+# Extend base.txt
+-r base.txt
+
+# Add extra test requirements here (such as factory-boy)
+# Add extra test requirements here (such as factory-boy)
+coverage
+pytest==8.2.0
+pytest-django==4.8.0
+pytest-env
+wagtail-factories==4.1.0
+wagtail_localize==1.10
+django-extensions
+
+factory-boy==3.3.0
+pytest-cov==4.1.0   

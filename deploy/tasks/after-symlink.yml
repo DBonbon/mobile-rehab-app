@@ -1,0 +1,15 @@
+- name: Create cache table
+  shell: "{{ ansistrano_shared_path }}/venv/bin/python {{ ansistrano_release_path.stdout }}/src/manage.py createcachetable"
+
+
+- name: Collect static
+  shell: "{{ ansistrano_shared_path }}/venv/bin/python {{ ansistrano_release_path.stdout }}/src/manage.py collectstatic --noinput"
+  become: yes
+  become_user: deploy
+
+- name: Restart uWSGI
+  become: yes
+  become_user: root
+  service:
+    name: "uwsgi{% if stage_name == 'stage' %}-{{ stage_name }}{% endif %}"
+    state: restarted

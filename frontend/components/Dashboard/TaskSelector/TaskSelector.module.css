@@ -1,0 +1,148 @@
+/* components/Dashboard/TaskSelector/TaskSelector.module.css */
+/* TaskSelector.module.css - Updated */
+.selectorContainer {
+  margin-bottom: 24px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.selectorContainer h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 1.125rem;
+  color: #333;
+}
+
+.selectorControls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.taskDropdown {
+  flex: 1;
+  min-width: 120px;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: white;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+}
+
+.selectButton {
+  padding: 10px 16px;
+  background-color: #4b7bec;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+.selectButton:disabled {
+  background-color: #a5b1c2;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Mobile optimization */
+@media (max-width: 480px) {
+  .selectorControls {
+    flex-direction: column;
+  }
+  
+  .taskDropdown {
+    width: 100%;
+  }
+  
+  .selectButton {
+    width: 100%;
+    padding: 12px 16px;
+  }
+}
+
+/* Rest of the CSS remains the same */
+.emptyState {
+  color: #777;
+  font-style: italic;
+  text-align: center;
+  padding: 16px 0;
+}
+
+/* Selected task details */
+.selectedTaskDetails {
+  background-color: white;
+  border-radius: 8px;
+  padding: 12px;
+  border-left: 3px solid #4b7bec;
+  margin-top: 4px;
+}
+
+.taskHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.taskHeader h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.difficulty {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  text-transform: capitalize;
+}
+
+.easy {
+  background-color: #c6f6d5;
+  color: #2f855a;
+}
+
+.medium {
+  background-color: #bee3f8;
+  color: #2b6cb0;
+}
+
+.hard {
+  background-color: #fed7d7;
+  color: #c53030;
+}
+
+.taskInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.taskDetail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+}
+
+.label {
+  font-weight: 500;
+  color: #666;
+  min-width: 65px;
+}
+
+.value {
+  color: #333;
+}

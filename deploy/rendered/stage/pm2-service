@@ -1,0 +1,24 @@
+[Unit]
+Description=PM2 process manager for savima-stage (deploy user)
+Documentation=https://pm2.keymetrics.io/
+After=network.target
+
+[Service]
+Type=simple
+User=deploy
+Group=www-data
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+Environment=PM2_HOME=/home/deploy/.pm2
+Environment=PATH=/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin:/home/deploy/.npm-global/bin
+
+ExecStart=/usr/bin/pm2 resurrect
+ExecReload=/usr/bin/pm2 reload all
+ExecStop=/usr/bin/pm2 stop all
+
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

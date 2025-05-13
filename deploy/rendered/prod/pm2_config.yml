@@ -1,0 +1,12 @@
+apps:
+  - name: savima
+    script: /mnt/persist/www/savima/current/frontend/.next/standalone/server.js
+    cwd: /mnt/persist/www/savima/current/frontend
+    exec_mode: fork
+    instances: 1
+    max_memory_restart: "350M"
+    env:
+      PORT: 3001
+      NODE_ENV: production
+      WAGTAIL_API_URL: "https://savima.org/wt/api/nextjs"
+      WAGTAIL_PUBLIC_WAGTAIL_API_URL: "/wt/api/nextjs"

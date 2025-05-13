@@ -1,0 +1,10 @@
+# ansible-vault(1) encrypted file
+---
+python_version: python3
+ansistrano_deploy_to: /mnt/persist/www/savima
+database_name: savima
+database_user: savima
+project_slug: savima
+domain_stage: stage.savima.org
+domain_prod: savima.org
+email: info@savima.org

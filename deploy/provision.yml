@@ -1,0 +1,332 @@
+---
+# ansible-playbook provision.yml
+- name: Provision server for application (secret gen, db setup, nginx, uwsgi and pm2 config)
+  hosts: all
+  vars:
+    ansistrano_deploy_from: "{{ playbook_dir }}/../src"
+    ansible_user: root
+    postgresql_version: "16"
+  
+  handlers:
+    - name: Restart PostgreSQL
+      service:
+        name: postgresql
+        state: restarted
+      become: yes
+  
+  tasks:
+    # =======================================================
+    # 1. Setup directory structure and generate secrets
+    # =======================================================
+    - name: Generates secrets/passwords
+      set_fact:
+        secret_key: "{{ lookup('password', '/dev/null chars=ascii_letters length=80') }}"
+        database_password: "{{ lookup('password', '/dev/null chars=ascii_letters length=40') }}"
+
+    - name: Creates directory for shared files
+      file:
+        path: "{{ ansistrano_deploy_to }}/shared"
+        state: directory
+        owner: deploy
+        group: www-data
+        mode: 0775
+        recurse: yes
+        
+    - name: Creates directory for pm2 config
+      file:
+        path: "{{ ansistrano_deploy_to }}/shared/pm2"
+        state: directory
+        owner: deploy
+        group: www-data
+        mode: 0775
+        recurse: yes
+        
+    # Create media directory
+    - name: Creates directory for media files
+      file:
+        path: "{{ ansistrano_deploy_to }}/shared/media"
+        state: directory
+        owner: deploy
+        group: www-data
+        mode: 0775
+        recurse: yes
+
+    # =======================================================
+    # 2. Database configuration
+    # =======================================================
+    - name: Install system PostgreSQL client library for Ansible
+      apt:
+        name: python3-psycopg2
+        state: present
+      become: yes
+
+    # PostgreSQL Configuration
+    - name: PostgreSQL Configuration
+      block:
+        # Ensure PostgreSQL is installed
+        - name: Install PostgreSQL and PostGIS
+          apt:
+            name:
+              - postgresql
+              - postgresql-contrib
+              - postgis
+              - python3-psycopg2
+            state: present
+            update_cache: yes
+          
+        # Configure authentication
+        - name: Modify pg_hba.conf for local connections
+          lineinfile:
+            path: "/etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf"
+            regexp: '^local\s+all\s+postgres\s+peer'
+            line: 'local   all   postgres   trust'
+            backrefs: yes
+          become: yes
+          notify: Restart PostgreSQL
+        
+        # Create a .pgpass file for passwordless authentication
+        - name: Create .pgpass file for root user
+          copy:
+            content: "*:*:*:postgres:postgres"
+            dest: /root/.pgpass
+            mode: '0600'
+          become: yes
+
+    - name: Creates postgres database
+      postgresql_db:
+        name: "{{ database_name }}"
+        template: template0
+      become: yes
+      become_user: postgres
+      
+    - name: Creates postgres user
+      postgresql_user:
+        db: "{{ database_name }}"
+        name: "{{ database_user }}"
+        password: "{{ database_password }}"
+      become: yes
+      become_user: postgres
+      
+    - name: Associate postgres user to database
+      postgresql_privs:
+        db: "{{ database_name }}"
+        privs: ALL
+        type: database
+        role: "{{ database_user }}"
+      become: yes
+      become_user: postgres
+    
+    - name: Grant schema privileges
+      postgresql_query:
+        db: "{{ database_name }}"
+        query: |
+          GRANT ALL ON SCHEMA public TO {{ database_user }};
+          ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO {{ database_user }};
+          ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO {{ database_user }};
+      become: yes
+      become_user: postgres
+
+    - name: Adds postgis extension
+      postgresql_ext:
+        name: postgis
+        db: "{{ database_name }}"
+      become: yes
+      become_user: postgres
+
+    # Remaining tasks...
+    # =======================================================
+    # 3. Environment files
+    # =======================================================
+    - name: Creates .env file for Django
+      template:
+        src: files/.env.j2
+        dest: "{{ ansistrano_deploy_to }}/shared/.env"
+        owner: deploy
+        group: www-data
+        mode: 0664
+
+    - name: Creates .env.next file for Next.js
+      template:
+        src: files/.env.next.j2
+        dest: "{{ ansistrano_deploy_to }}/shared/.env.next"
+        owner: deploy
+        group: www-data
+        mode: 0664
+        
+    - name: Copies robots.txt
+      copy:
+        src: "files/robots.txt"
+        dest: "{{ ansistrano_deploy_to }}/shared/robots.txt"
+        owner: deploy
+        group: www-data
+        mode: 0664
+
+    # =======================================================
+    # 4. uWSGI Configuration
+    # =======================================================
+    - name: Create systemd service file for uWSGI
+      template:
+        src: files/uwsgi-service.j2
+        dest: /etc/systemd/system/uwsgi{% if stage_name == "stage" %}-{{ stage_name }}{% endif %}.service
+        owner: root
+        group: root
+        mode: '0644'
+      become: yes
+      register: uwsgi_service_updated
+
+    - name: Reload systemd configuration for uWSGI service
+      systemd:
+        daemon_reload: yes
+      become: yes
+      when: uwsgi_service_updated.changed
+    
+    - name: Counts previous uwsgi apps
+      shell: ls -1 /mnt/persist/uwsgi/conf.d/ | wc -l
+      register: uwsgi_application_count
+
+    - name: Set dynamic uWSGI port
+      set_fact:
+        uwsgi_port: "{{ 9190 + uwsgi_application_count.stdout | int }}"
+      
+    - name: Creates uWSGI config
+      template:
+        src: files/uwsgi.ini.j2
+        dest: "/mnt/persist/uwsgi/conf.d/{{ project_slug }}.ini"
+        mode: 0664
+        
+    - name: Replaces default uwsgi conf with empty
+      file:
+        path: "/mnt/persist/uwsgi/conf.d/django.ini"
+        state: absent
+        
+    - name: Creates empty default uwsgi conf
+      shell: echo "" > /mnt/persist/uwsgi/conf.d/django.ini
+
+    # =======================================================
+    # 5. PM2 Configuration
+    # =======================================================
+    - name: Create systemd service file for PM2
+      template:
+        src: files/pm2-service.j2
+        dest: /etc/systemd/system/pm2-{{ project_slug }}.service
+        owner: root
+        group: root
+        mode: '0644'
+      become: yes
+      register: pm2_service_updated
+
+    - name: Reload systemd configuration for PM2 service
+      systemd:
+        daemon_reload: yes
+      become: yes
+      when: pm2_service_updated.changed
+      
+    - name: Counts previous pm2 apps
+      shell: ls -1 /mnt/persist/nodejs/ | wc -l
+      register: pm2_application_count
+    
+    - name: Set dynamic PM2 port
+      set_fact:
+        next_port: "{{ 3000 + pm2_application_count.stdout | int }}"
+      
+    - name: Creates pm2 .yml file for next.js
+      template:
+        src: files/pm2_config.yml.j2
+        dest: "/mnt/persist/nodejs/{{ project_slug }}.yml"
+        group: www-data
+        mode: 0664
+
+    # =======================================================
+    # 6. Nginx Configuration
+    # =======================================================
+    - name: Copies nginx config
+      template:
+        src: "files/nginx.conf.j2"
+        dest: "/mnt/persist/nginx/conf.d/{{ project_slug }}.conf"
+        mode: 0664
+
+    
+
+    # =======================================================
+    # 7. Scheduled Tasks
+    # =======================================================
+    # Add this right before your crontab task
+    - name: Ensure crontab directory exists
+      file:
+        path: /mnt/persist/etc
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+      become: yes
+
+    # Then create the crontab file if it doesn't exist
+    - name: Ensure crontab file exists
+      copy:
+        content: "# System crontab file for {{ project_slug }}\n"
+        dest: /mnt/persist/etc/crontab
+        force: no  # Only create if it doesn't exist
+        owner: root
+        group: root
+        mode: '0644'
+      become: yes
+
+    - name: Add wagtail cronjobs
+      lineinfile:
+        path: /mnt/persist/etc/crontab
+        line: "0 *  * * * www-data {{ ansistrano_deploy_to }}/shared/venv/bin/python {{ ansistrano_deploy_to }}/current/src/manage.py publish_scheduled_pages"
+
+    # =======================================================
+# 8. Logging Configuration 
+# =======================================================
+    - name: Create log directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: 0755
+      with_items:
+        - /var/log/uwsgi
+        - /var/log/{{ project_slug }}
+
+    - name: Configure log rotation
+      template:
+        src: files/logrotate.conf.j2
+        dest: /etc/logrotate.d/{{ project_slug }}
+        mode: 0644
+
+    # =======================================================
+    # 9. Service Management (Only enable, not start)
+    # =======================================================
+    - name: Enable uwsgi service
+      systemd:
+        name: "uwsgi{% if stage_name == 'stage' %}-{{ stage_name }}{% endif %}"
+        enabled: yes
+      
+    - name: Enable pm2 service
+      systemd:
+        name: "pm2-{{ project_slug }}"
+        enabled: yes
+
+    - name: Reload nginx configuration
+      systemd:
+        name: nginx
+        state: reloaded
+      become: yes
+
+# =======================================================
+# 10. Verify Permissions
+# =======================================================
+    - name: Verify and fix permissions
+      file:
+        path: "{{ item.path }}"
+        owner: "{{ item.owner }}"
+        group: "{{ item.group }}"
+        mode: "{{ item.mode }}"
+        recurse: "{{ item.recurse | default(false) }}"
+      with_items:
+        - { path: "{{ ansistrano_deploy_to }}/shared", owner: "deploy", group: "www-data", mode: "0775", recurse: true }
+        - { path: "/mnt/persist/uwsgi/conf.d", owner: "root", group: "root", mode: "0755", recurse: false }
+        - { path: "/mnt/persist/nginx/conf.d", owner: "root", group: "root", mode: "0755", recurse: false }
+        - { path: "/mnt/persist/nodejs", owner: "deploy", group: "www-data", mode: "0775", recurse: false }

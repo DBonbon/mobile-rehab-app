@@ -1,0 +1,57 @@
+---
+# Frontend tasks to run after code update
+# frontend-after-update-code.yml
+
+- name: Get actual frontend release path
+  shell: "echo {{ ansistrano_deploy_to }}/releases/$(ls -1t {{ ansistrano_deploy_to }}/releases | head -n1)/frontend"
+  register: actual_frontend_path
+  changed_when: false
+
+- name: Show actual frontend path
+  debug:
+    var: actual_frontend_path.stdout
+
+- name: Ensure Node.js version matches .nvmrc
+  shell: |
+    . /home/deploy/.nvm/nvm.sh
+    cd {{ actual_frontend_path.stdout }}
+    nvm install
+  args:
+    executable: /bin/bash
+  become: yes
+  become_user: deploy
+
+- name: Install Node.js dependencies
+  shell: |
+    . /home/deploy/.nvm/nvm.sh
+    cd {{ actual_frontend_path.stdout }}
+    npm ci
+  args:
+    executable: /bin/bash
+  become: yes
+  become_user: deploy
+
+- name: Build Next.js application
+  shell: |
+    . /home/deploy/.nvm/nvm.sh
+    cd {{ actual_frontend_path.stdout }}
+    npm run build
+  args:
+    executable: /bin/bash
+  become: yes
+  become_user: deploy
+
+- name: Create symlink to environment file
+  file:
+    src: "{{ ansistrano_deploy_to }}/shared/.env.next"
+    dest: "{{ actual_frontend_path.stdout }}/.env.local"
+    state: link
+    force: yes
+
+- name: Ensure proper permissions for frontend files
+  file:
+    path: "{{ actual_frontend_path.stdout }}"
+    owner: deploy
+    group: www-data
+    mode: "u=rwX,g=rX,o=rX"
+    recurse: yes
